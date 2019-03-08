@@ -29,9 +29,9 @@ COPY tmp/shared/tomcat/common/sshd_config /etc/ssh/
 COPY tmp/shared/app_insights/AI-Agent.xml /usr/local/app_insights/aiagent/
 COPY tmp/shared/app_insights/ApplicationInsights.xml /usr/local/app_insights/tomcat_lib/
 
-RUN apk add --update openssh-server bash openrc \
+RUN apk add --update openssh-server bash openrc apr tzdata \
         && rm -rf /var/cache/apk/* \
-        && echo "root:Docker!" | chpasswd \
+        && echo "root:Docker!" | chpasswd \        
         && wget -O /tmp/apache-tomcat-$TOMCAT_VERSION.tar.gz https://archive.apache.org/dist/tomcat/tomcat-$TOMCAT_MAJOR/v$TOMCAT_VERSION/bin/apache-tomcat-$TOMCAT_VERSION.tar.gz --no-verbose \
         && tar xvzf /tmp/apache-tomcat-$TOMCAT_VERSION.tar.gz -C /tmp \
         && mv /tmp/apache-tomcat-$TOMCAT_VERSION /usr/local/tomcat \
@@ -42,6 +42,7 @@ RUN apk add --update openssh-server bash openrc \
         && wget -O /usr/local/app_insights/aiagent/applicationinsights-agent-$AI_VERSION.jar https://github.com/Microsoft/ApplicationInsights-Java/releases/download/$AI_VERSION/applicationinsights-agent-$AI_VERSION.jar --no-verbose \
         && chmod 755 /bin/init_container.sh 
 
+COPY /usr/share/zoneinfo/Asia/Seoul /etc/localtime
 COPY tmp/shared/tomcat/8.5/server.xml /usr/local/tomcat/conf/server.xml
 COPY tmp/shared/tomcat/8.5/catalina.properties /usr/local/tomcat/conf/catalina.properties
 COPY tmp/shared/tomcat/8.5/context.xml /usr/local/tomcat/conf/context.xml
